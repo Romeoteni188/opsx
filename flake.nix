@@ -1,43 +1,46 @@
 {
-  description = "Multi Architecture Nix Flake for GO development";
+  description = "OPSX - Linux-first DevOps and DevSecOps CLI";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      ...
-    }@inputs:
-
-    flake-utils.lib.eachDefaultSystem (
-      system:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          config.allowUnfree = true;
         };
-
-        packages = import ./nix/packages.nix {
-          inherit
-            pkgs
-            self
-            system
-            ;
-        };
-
-        devShell = import ./nix/devshell.nix {
-          inherit pkgs;
-        };
-
       in
       {
-        devShells.default = devShell;
-        packages = packages;
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            go
+            gopls
+            gotools
+            golangci-lint
+          ];
+
+          shellHook = ''
+            echo ""
+            echo "OPSX development environment"
+            echo ""
+
+            echo "Go:"
+            go version
+
+            echo ""
+            echo "System:"
+            uname -a
+
+            echo ""
+          '';
+        };
       }
     );
 }
