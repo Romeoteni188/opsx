@@ -1,5 +1,10 @@
-type CheckResult struct {
-	Name    string
-	Passed  bool
-	Message string
+package doctor
+
+func Run() Report {
+	return Report{
+		Categories: []Category{
+			CheckSystem(),
+			CheckDevelopment(),
+		},
+	}
 }
