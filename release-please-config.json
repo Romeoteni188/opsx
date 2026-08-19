@@ -1,0 +1,7 @@
+{
+    "release-type": "go",
+    "include-commit-authors": true,
+    "packages": {
+        ".": {}
+    }
+}
